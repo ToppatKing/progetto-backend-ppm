@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: ticket-reservation-api
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi --log-file -"
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: DJANGO_USE_HTTPS
+        value: "True"
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+
+# NOTA: il filesystem del piano gratuito di Render è effimero, quindi
+# db.sqlite3 (compresi i dati demo) viene azzerato a ogni deploy/riavvio.
+# Va benissimo per valutare un deployment "fresco", ma se serve che i dati
+# persistano tra un riavvio e l'altro, distribuisci su un host con disco
+# persistente (es. PythonAnywhere - vedi README.md) oppure collega un
+# database Postgres gestito al posto di SQLite.
