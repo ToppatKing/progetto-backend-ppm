@@ -1,4 +1,4 @@
-# Ticket Reservation API — [Il tuo nome qui]
+# Ticket Reservation API — Jacopo Bandinelli
 
 **Tipo di progetto:** REST API
 **Framework utilizzato:** Django REST Framework (Django 6.0, DRF 3.17)
@@ -281,6 +281,13 @@ http POST $BASE/api/auth/login/ username=alice password=demopass123
 # -> copia il campo "token" dalla risposta, poi usalo così:
 export TOKEN=f56390b7507499897e25648cfd62e7ee89e7be1   # solo un esempio
 
+# Ripeti lo stesso login con altri account demo per ottenere gli altri
+# token usati più sotto (stessa richiesta, cambiano solo le credenziali):
+#   http POST $BASE/api/auth/login/ username=admin password=admin123   -> copia in $ADMIN_TOKEN
+#   http POST $BASE/api/auth/login/ username=bob   password=demopass123 -> copia in $BOB_TOKEN
+export ADMIN_TOKEN=...   # token ottenuto effettuando il login come "admin"
+export BOB_TOKEN=...     # token ottenuto effettuando il login come "bob"
+
 # Tutto ciò che segue il login usa:  Authorization:"Token $TOKEN"
 
 # Registra un nuovo account cliente
@@ -321,6 +328,17 @@ http POST $BASE/api/events/ Authorization:"Token $ADMIN_TOKEN" \
   title="Test Expo" venue="Fortezza da Basso" \
   event_date="2027-01-15T10:00:00Z" total_seats:=40 price:=3.00 \
   category=other
+
+# Azione vietata: alice (customer) prova a creare un evento -> 403 Forbidden
+# (dimostra che il controllo dei permessi è applicato lato server, non solo
+# nascosto nell'interfaccia)
+http POST $BASE/api/events/ Authorization:"Token $TOKEN" \
+  title="Non dovrebbe funzionare" venue="X" \
+  event_date="2027-01-15T10:00:00Z" total_seats:=10
+
+# Azione vietata: bob prova a vedere una prenotazione di alice -> 404 Not Found
+# (un cliente non vede/non può agire sulle prenotazioni altrui)
+http GET $BASE/api/reservations/1/ Authorization:"Token $BOB_TOKEN"
 
 # Logout (invalida il token)
 http POST $BASE/api/auth/logout/ Authorization:"Token $TOKEN"
