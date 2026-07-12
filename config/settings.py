@@ -56,6 +56,7 @@ if not SECRET_KEY:
 # Elenco di host separati da virgola, es. "myapp.onrender.com,localhost"
 _allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(",") if h.strip()] or [
+    'progetto-backend-ppm.onrender.com',
     "localhost",
     "127.0.0.1",
 ]
@@ -63,7 +64,7 @@ ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(",") if h.strip()] or [
 # da eseguire in locale / in un ambiente di valutazione sandbox senza
 # configurazioni aggiuntive.
 if DEBUG:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = ['progetto-backend-ppm.onrender.com']
 
 # Richiesto da Django quando l'app è dietro un proxy sulla maggior parte
 # degli host PaaS (Render, Railway, ecc.), affinché i controlli CSRF
