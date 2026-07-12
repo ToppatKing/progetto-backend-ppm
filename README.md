@@ -168,21 +168,6 @@ esistente non crea duplicati.
 
 **URL live: https://progetto-backend-ppm.onrender.com**
 
-> Questo repository è pronto per il deployment (`Procfile`, `render.yaml`,
-> `build.sh`, impostazioni basate su variabili d'ambiente, WhiteNoise per i
-> file statici, CORS abilitato) ma non è stato distribuito automaticamente
-> durante la generazione di questo progetto. Scegli una delle opzioni qui
-> sotto — tutte e tre richiedono meno di dieci minuti — poi incolla l'URL
-> risultante qui sopra.
-
-Nota: su piattaforme con filesystem effimero (piani gratuiti di
-Render/Railway), `db.sqlite3` può azzerarsi a ogni redeploy — `build.sh`
-lo ripopola automaticamente, così gli account demo e gli eventi di
-partenza sono sempre presenti dopo un deploy, anche se non in modo
-permanente a ogni riavvio del dyno. Per un database realmente persistente
-tra un riavvio e l'altro, PythonAnywhere o un volume Postgres gestito e
-collegato sono scelte più sicure.
-
 ## 8. Riferimento agli endpoint dell'API
 
 URL base (locale): `http://127.0.0.1:8000` · URL base (online): https://progetto-backend-ppm.onrender.com/api/
