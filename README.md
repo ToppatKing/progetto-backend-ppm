@@ -166,7 +166,7 @@ esistente non crea duplicati.
 
 ## 7. Deployment online
 
-**URL live: [AGGIUNGI QUI IL TUO URL DI DEPLOYMENT UNA VOLTA PUBBLICATO]**
+**URL live: https://progetto-backend-ppm.onrender.com**
 
 > Questo repository è pronto per il deployment (`Procfile`, `render.yaml`,
 > `build.sh`, impostazioni basate su variabili d'ambiente, WhiteNoise per i
@@ -174,35 +174,6 @@ esistente non crea duplicati.
 > durante la generazione di questo progetto. Scegli una delle opzioni qui
 > sotto — tutte e tre richiedono meno di dieci minuti — poi incolla l'URL
 > risultante qui sopra.
-
-**Opzione A — Render (la più veloce, Blueprint con un clic)**
-1. Carica questo repository su GitHub.
-2. Su [render.com](https://render.com), scegli *New → Blueprint* e punta
-   al tuo repository. Render legge automaticamente `render.yaml` e
-   configura il web service, il comando di build e le variabili
-   d'ambiente.
-3. Clicca su *Apply*. `build.sh` installa le dipendenze, esegue le
-   migrazioni e ripopola i dati demo a ogni deploy, così gli account demo
-   funzionano sempre.
-
-**Opzione B — Railway**
-1. Carica questo repository su GitHub, crea un nuovo progetto Railway a
-   partire da esso.
-2. Imposta il comando di avvio su
-   `python manage.py migrate && python manage.py seed_demo_data && gunicorn config.wsgi --log-file -`.
-3. Imposta le variabili d'ambiente `DJANGO_DEBUG=False` e
-   `DJANGO_ALLOWED_HOSTS=<il-tuo-dominio-railway>`.
-
-**Opzione C — PythonAnywhere (la scelta migliore per un SQLite persistente)**
-1. Carica/clona il repository in una console PythonAnywhere, crea un
-   virtualenv, esegui `pip install -r requirements.txt`.
-2. Configura una nuova Web app (configurazione manuale, Django), punta il
-   file WSGI a `config.wsgi.application`, imposta la working directory
-   sulla cartella principale del progetto.
-3. Esegui `python manage.py migrate` una volta dalla console
-   PythonAnywhere (evita `seed_demo_data` nei reload successivi se vuoi
-   preservare eventuali modifiche fatte dai tester — il `db.sqlite3`
-   incluso è già popolato).
 
 Nota: su piattaforme con filesystem effimero (piani gratuiti di
 Render/Railway), `db.sqlite3` può azzerarsi a ogni redeploy — `build.sh`
@@ -214,7 +185,7 @@ collegato sono scelte più sicure.
 
 ## 8. Riferimento agli endpoint dell'API
 
-URL base (locale): `http://127.0.0.1:8000` · URL base (online): vedi §7.
+URL base (locale): `http://127.0.0.1:8000` · URL base (online): https://progetto-backend-ppm.onrender.com/api/
 Tutti i corpi di richiesta/risposta sono JSON. Invia
 `Content-Type: application/json`.
 
@@ -270,61 +241,61 @@ contratto dati testato sopra — vedi anche la Sezione 11.)
 Installa HTTPie: <https://httpie.io/docs/cli/installation> (oppure più
 semplicemente `python -m pip install httpie`).
 
-**URL base:** sostituisci `$BASE` qui sotto con `http://127.0.0.1:8000`
-in locale, oppure con il tuo URL di deployment dalla §7.
+**URL base:** sostituisci `https://progetto-backend-ppm.onrender.com` qui sotto con `http://127.0.0.1:8000`
+in locale
 
 ```bash
 # Effettua il login e ottieni un token (oppure usa il flag --auth di httpie
 # come mostrato più sotto)
-http POST $BASE/api/auth/login/ username=alice password=demopass123
+http POST https://progetto-backend-ppm.onrender.com/api/auth/login/ username=alice password=demopass123
 
 # -> copia il campo "token" dalla risposta, poi usalo così:
 export TOKEN=f56390b7507499897e25648cfd62e7ee89e7be1   # solo un esempio
 
 # Ripeti lo stesso login con altri account demo per ottenere gli altri
 # token usati più sotto (stessa richiesta, cambiano solo le credenziali):
-#   http POST $BASE/api/auth/login/ username=admin password=admin123   -> copia in $ADMIN_TOKEN
-#   http POST $BASE/api/auth/login/ username=bob   password=demopass123 -> copia in $BOB_TOKEN
+#   http POST https://progetto-backend-ppm.onrender.com/api/auth/login/ username=admin password=admin123   -> copia in $ADMIN_TOKEN
+#   http POST https://progetto-backend-ppm.onrender.com/api/auth/login/ username=bob   password=demopass123 -> copia in $BOB_TOKEN
 export ADMIN_TOKEN=...   # token ottenuto effettuando il login come "admin"
 export BOB_TOKEN=...     # token ottenuto effettuando il login come "bob"
 
 # Tutto ciò che segue il login usa:  Authorization:"Token $TOKEN"
 
 # Registra un nuovo account cliente
-http POST $BASE/api/auth/register/ \
+http POST https://progetto-backend-ppm.onrender.com/api/auth/register/ \
   username=newuser email=newuser@example.com \
   password=Sup3rSecure!9 password_confirm=Sup3rSecure!9 \
   first_name=New last_name=User
 
 # Sfoglia gli eventi (nessuna autenticazione richiesta)
-http GET $BASE/api/events/
-http GET "$BASE/api/events/?category=concert&search=jazz"
-http GET $BASE/api/events/1/
-http GET "$BASE/api/events/1/seats/?status=available"
-http GET $BASE/api/events/1/availability/
+http GET https://progetto-backend-ppm.onrender.com/api/events/
+http GET "https://progetto-backend-ppm.onrender.com/api/events/?category=concert&search=jazz"
+http GET https://progetto-backend-ppm.onrender.com/api/events/1/
+http GET "https://progetto-backend-ppm.onrender.com/api/events/1/seats/?status=available"
+http GET https://progetto-backend-ppm.onrender.com/api/events/1/availability/
 
 # Crea una prenotazione (prenota il posto con id 3 per l'evento con id 1)
-http POST $BASE/api/reservations/ Authorization:"Token $TOKEN" \
+http POST https://progetto-backend-ppm.onrender.com/api/reservations/ Authorization:"Token $TOKEN" \
   event:=1 seat:=3 notes="posto lato corridoio per favore"
 
 # Elenca le mie prenotazioni
-http GET $BASE/api/reservations/ Authorization:"Token $TOKEN"
+http GET https://progetto-backend-ppm.onrender.com/api/reservations/ Authorization:"Token $TOKEN"
 
 # Controlla lo stato di una prenotazione
-http GET $BASE/api/reservations/6/status/ Authorization:"Token $TOKEN"
+http GET https://progetto-backend-ppm.onrender.com/api/reservations/6/status/ Authorization:"Token $TOKEN"
 
 # Aggiorna la nota di una prenotazione
-http PATCH $BASE/api/reservations/6/ Authorization:"Token $TOKEN" \
+http PATCH https://progetto-backend-ppm.onrender.com/api/reservations/6/ Authorization:"Token $TOKEN" \
   notes="nota aggiornata"
 
 # Annulla una prenotazione (annullamento soft, libera il posto)
-http POST $BASE/api/reservations/6/cancel/ Authorization:"Token $TOKEN"
+http POST https://progetto-backend-ppm.onrender.com/api/reservations/6/cancel/ Authorization:"Token $TOKEN"
 
 # Elimina definitivamente una prenotazione
-http DELETE $BASE/api/reservations/6/ Authorization:"Token $TOKEN"
+http DELETE https://progetto-backend-ppm.onrender.com/api/reservations/6/ Authorization:"Token $TOKEN"
 
 # Solo admin: crea un nuovo evento
-http POST $BASE/api/events/ Authorization:"Token $ADMIN_TOKEN" \
+http POST https://progetto-backend-ppm.onrender.com/api/events/ Authorization:"Token $ADMIN_TOKEN" \
   title="Test Expo" venue="Fortezza da Basso" \
   event_date="2027-01-15T10:00:00Z" total_seats:=40 price:=3.00 \
   category=other
@@ -332,22 +303,22 @@ http POST $BASE/api/events/ Authorization:"Token $ADMIN_TOKEN" \
 # Azione vietata: alice (customer) prova a creare un evento -> 403 Forbidden
 # (dimostra che il controllo dei permessi è applicato lato server, non solo
 # nascosto nell'interfaccia)
-http POST $BASE/api/events/ Authorization:"Token $TOKEN" \
+http POST https://progetto-backend-ppm.onrender.com/api/events/ Authorization:"Token $TOKEN" \
   title="Non dovrebbe funzionare" venue="X" \
   event_date="2027-01-15T10:00:00Z" total_seats:=10
 
 # Azione vietata: bob prova a vedere una prenotazione di alice -> 404 Not Found
 # (un cliente non vede/non può agire sulle prenotazioni altrui)
-http GET $BASE/api/reservations/1/ Authorization:"Token $BOB_TOKEN"
+http GET https://progetto-backend-ppm.onrender.com/api/reservations/1/ Authorization:"Token $BOB_TOKEN"
 
 # Logout (invalida il token)
-http POST $BASE/api/auth/logout/ Authorization:"Token $TOKEN"
+http POST https://progetto-backend-ppm.onrender.com/api/auth/logout/ Authorization:"Token $TOKEN"
 ```
 
 Le versioni equivalenti con `curl` di ogni comando sopra funzionano
 altrettanto bene, ad esempio:
 ```bash
-curl -X POST $BASE/api/auth/login/ -H "Content-Type: application/json" \
+curl -X POST https://progetto-backend-ppm.onrender.com/api/auth/login/ -H "Content-Type: application/json" \
   -d '{"username":"alice","password":"demopass123"}'
 ```
 
